@@ -2,10 +2,9 @@
   "name": "uc-payroll",
   "version": "1.0.0",
   "description": "",
-  "main": "index..js",
+  "main": "server.js",
   "scripts": {
     "build": "cd frontend && npm run build",
-    "install": "cd frontend && npm install",
     "start": "node server.js"
   },
   "keywords": [],
