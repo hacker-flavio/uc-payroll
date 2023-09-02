@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
+import PayrollChart from "./components/PayrollChart";
 import axios from "axios";
 
 function App() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<{ rows: { cell: string[]; id: string }[] }>({
+    rows: [],
+  });
+  const nums = [12, 19, 3, 5, 2, 3];
+  const labels = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"];
 
   useEffect(() => {
     axios.get("/payrolls").then((res) => {
@@ -55,6 +60,11 @@ function App() {
           </tbody>
         </table>
       )}
+
+      <div>
+        {/* <PayrollChart message="Flavio" /> */}
+        <PayrollChart nums={nums} labels={labels} />
+      </div>
     </div>
   );
 }
