@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
+import "../styles/PayrollChart.css";
 
 interface LineChartProps {
   nums: number[];
@@ -44,7 +45,7 @@ const LineChart: React.FC<LineChartProps> = ({ nums, labels }) => {
 
   return (
     <div style={{ width: "80%", margin: "0 auto" }}>
-      <canvas id="line-chart" />
+      <canvas id="line-chart" className="payroll-chart" />
     </div>
   );
 };
