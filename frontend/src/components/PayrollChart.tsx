@@ -3,11 +3,12 @@ import Chart from "chart.js/auto";
 import "../styles/PayrollChart.css";
 
 interface LineChartProps {
-  nums: number[];
-  labels: string[];
+  nums: { x: number; y: number }[]; // Update the type for nums and nums2
+  nums2: { x: number; y: number }[]; // Update the type for nums and nums2
+  labels: number[];
 }
 
-const LineChart: React.FC<LineChartProps> = ({ nums, labels }) => {
+const LineChart: React.FC<LineChartProps> = ({ nums, nums2, labels }) => {
   const chartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
@@ -29,19 +30,38 @@ const LineChart: React.FC<LineChartProps> = ({ nums, labels }) => {
         labels: labels,
         datasets: [
           {
-            label: "Line Chart",
-            data: nums,
+            label: "JORGE HERRERA GOMEZ",
+            data: nums.map((value) => ({ x: value.x, y: value.y })),
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 2,
+            fill: false,
+          },
+          {
+            label: "ROGELIO CHAVEZ",
+            data: nums2.map((value) => ({ x: value.x, y: value.y })),
+            borderColor: "rgba(192, 75, 75, 1)",
+            borderWidth: 2,
+            fill: false,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          x: {
+            type: "linear", // This ensures that the x-axis treats the labels as numbers
+            ticks: {
+              callback: function (value) {
+                // Custom callback to format x-axis tick labels as strings
+                return value.toString();
+              },
+            },
+          },
+        },
       },
     });
-  }, [nums, labels]);
+  }, [nums, nums2, labels]);
 
   return (
     <div style={{ width: "80%", margin: "0 auto" }}>

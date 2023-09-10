@@ -3,89 +3,123 @@ import PayrollChart from "./components/PayrollChart";
 import axios from "axios";
 
 function App() {
-  const [data, setData] = useState<{ rows: { cell: string[]; id: string }[] }>({
-    rows: [],
-  });
-  // Use useState to manage nums and labels arrays
-  const [nums, setNums] = useState<number[]>([]);
-  const [labels, setLabels] = useState<string[]>([]);
-  const [showTable, setShowTable] = useState<boolean>(false);
+  const [data, setData] = useState([
+    {
+      year: "2010",
+      payroll: ["JORGE HERRERA GOMEZ", "9273.71"],
+    },
+    {
+      year: "2011",
+      payroll: ["JORGE HERRERA GOMEZ", "28313.93"],
+    },
+    {
+      year: "2012",
+      payroll: ["JORGE HERRERA GOMEZ", "43966.64"],
+    },
+    {
+      year: "2013",
+      payroll: ["JORGE HERRERA GOMEZ", "43092.00"],
+    },
+    {
+      year: "2014",
+      payroll: ["JORGE HERRERA GOMEZ", "44385.00"],
+    },
+    {
+      year: "2015",
+      payroll: ["JORGE HERRERA GOMEZ", "45716.00"],
+    },
+    {
+      year: "2017",
+      payroll: ["JORGE HERRERA GOMEZ", "50058.00"],
+    },
+    {
+      year: "2018",
+      payroll: ["JORGE HERRERA GOMEZ", "52051.00"],
+    },
+    {
+      year: "2019",
+      payroll: ["JORGE HERRERA GOMEZ", "55391.00"],
+    },
+    {
+      year: "2020",
+      payroll: ["JORGE HERRERA GOMEZ", "56352.00"],
+    },
+    {
+      year: "2021",
+      payroll: ["JORGE HERRERA GOMEZ", "57057.00"],
+    },
+    {
+      year: "2022",
+      payroll: ["JORGE HERRERA GOMEZ", "59134.00"],
+    },
+  ]);
 
-  useEffect(() => {
-    axios.get("/payrolls").then((res) => {
-      // Replace single quotes with double quotes in the response text
-      const responseText = res.data.replace(/'/g, '"');
-      // Parse the JSON string to a JavaScript object
-      const parsedData = JSON.parse(responseText);
-      setData(parsedData);
-    });
-  }, []);
+  const [data2, setData2] = useState([
+    {
+      year: "2012",
+      payroll: ["ROGELIO CHAVEZ", "12904.47"],
+    },
+    {
+      year: "2013",
+      payroll: ["ROGELIO CHAVEZ", "33241.00"],
+    },
+    {
+      year: "2014",
+      payroll: ["ROGELIO CHAVEZ", "35461.00"],
+    },
+    {
+      year: "2015",
+      payroll: ["ROGELIO CHAVEZ", "36611.00"],
+    },
+    {
+      year: "2017",
+      payroll: ["ROGELIO CHAVEZ", "40285.00"],
+    },
+    {
+      year: "2018",
+      payroll: ["ROGELIO CHAVEZ", "42532.00"],
+    },
+    {
+      year: "2019",
+      payroll: ["ROGELIO CHAVEZ", "48600.00"],
+    },
+    {
+      year: "2020",
+      payroll: ["ROGELIO CHAVEZ", "49440.00"],
+    },
+    {
+      year: "2021",
+      payroll: ["ROGELIO CHAVEZ", "50210.00"],
+    },
+    {
+      year: "2022",
+      payroll: ["ROGELIO CHAVEZ", "51883.00"],
+    },
+  ]);
 
-  useEffect(() => {
-    if (data.rows.length > 0) {
-      // Use functional updates to avoid directly mutating the state arrays
-      setNums((prevNums) => {
-        const newNums = data.rows.map((row) => parseInt(row.cell[6], 10)); // Parse to number
-        return [...prevNums, ...newNums];
-      });
+  // const payrolls = data.map((item) => parseFloat(item.payroll[1]));
+  // const payrolls2 = data2.map((item) => parseFloat(item.payroll[1]));
 
-      setLabels((prevLabels) => {
-        const newLabels = data.rows.map((row) => row.cell[4]);
-        return [...prevLabels, ...newLabels];
-      });
-    }
-  }, [data]);
+  // Extract payrolls/numbers and years/labels from the data
+  const payrolls = data.map((object) => ({
+    x: parseInt(object.year),
+    y: parseFloat(object.payroll[1]),
+  }));
+  const payrolls2 = data2.map((object) => ({
+    x: parseInt(object.year),
+    y: parseFloat(object.payroll[1]),
+  }));
+
+  const years = data.map((item) => parseInt(item.year));
 
   return (
     <div className="App">
       <div style={{ width: "80%", margin: "0 auto" }}>
-        <h1>React App</h1>
+        <h1>JORGE HERRERA GOMEZ vs ROGELIO CHAVEZ Salary</h1>
       </div>
 
       <div>
-        <PayrollChart nums={nums} labels={labels} />
-      </div>
-
-      <div style={{ width: "80%", margin: "0 auto" }}>
-        <div>
-          <button onClick={() => setShowTable(!showTable)}>Show Table</button>
-        </div>
-        <div>
-          {data && showTable ? (
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Year</th>
-                  <th>Campus</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Title</th>
-                  <th>Salary</th>
-                  <th>Total Pay</th>
-                  <th>Other Pay</th>
-                  <th>Benefits</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.rows.map((row) => (
-                  <tr key={row.id}>
-                    <td>{row.cell[0]}</td>
-                    <td>{row.cell[1]}</td>
-                    <td>{row.cell[2]}</td>
-                    <td>{row.cell[3]}</td>
-                    <td>{row.cell[4]}</td>
-                    <td>{row.cell[5]}</td>
-                    <td>{row.cell[6]}</td>
-                    <td>{row.cell[7]}</td>
-                    <td>{row.cell[8]}</td>
-                    <td>{row.cell[9]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : null}
-        </div>
+        <PayrollChart nums={payrolls} nums2={payrolls2} labels={years} />
       </div>
     </div>
   );
