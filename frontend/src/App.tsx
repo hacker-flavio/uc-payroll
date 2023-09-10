@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PayrollChart from "./components/PayrollChart";
-import axios from "axios";
-
 function App() {
-  const [data, setData] = useState([
+  const [data] = useState([
     {
       year: "2010",
       payroll: ["JORGE HERRERA GOMEZ", "9273.71"],
@@ -54,7 +52,7 @@ function App() {
     },
   ]);
 
-  const [data2, setData2] = useState([
+  const [data2] = useState([
     {
       year: "2012",
       payroll: ["ROGELIO CHAVEZ", "12904.47"],
