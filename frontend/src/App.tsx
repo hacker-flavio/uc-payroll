@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PayrollChart from "./components/PayrollChart";
 import axios from "axios";
 interface ResponseData {
@@ -6,10 +6,6 @@ interface ResponseData {
     year: string;
     salary: string;
   }[];
-}
-
-interface ResponseString {
-  data: string;
 }
 
 function App() {
