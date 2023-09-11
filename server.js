@@ -42,7 +42,7 @@ app.get("/indexEmployeeMongo", async (req, res) => {
   // const schoolNameToFind = "Merced";
   // const employeeNameToFind = "ROGELIO CHAVEZ";
   const schoolNameToFind = schoolName;
-  const employeeNameToFind = employeeName;
+  const employeeNameToFind = employeeName.toUpperCase();
 
   try {
     const collection = mongoose.connection.db.collection("dataFile"); // Replace with your collection name

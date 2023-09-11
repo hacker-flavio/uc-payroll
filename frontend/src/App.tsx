@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PayrollChart from "./components/PayrollChart";
+import SearchEmployee from "./components/SearchEmployee";
+import MyLoadingScreen from "./components/MyLoadingScreen";
+import EmptyPage from "./components/EmptyPage";
 import axios from "axios";
 interface ResponseData {
   data: {
@@ -9,8 +12,8 @@ interface ResponseData {
 }
 
 function App() {
-  const [employeeName, setEmployeeName] = useState("JAY SHARPING");
-
+  const [employeeName, setEmployeeName] = useState("");
+  const [isSearching, setIsSearching] = useState({ state: "null" }); // [1
   const [data, setData] = useState<{ year: string; salary: string }[] | null>(
     null
   );
@@ -28,6 +31,8 @@ function App() {
       .then((response: ResponseData) => {
         console.log(JSON.stringify(response.data));
         setData(response.data); // Assuming the response is an array
+        // setIsSearching(false);
+        setIsSearching({ state: "success" }); // [2
       })
       .catch((error: any) => {
         console.log(error);
@@ -42,26 +47,28 @@ function App() {
 
   const years = data?.map((item) => parseInt(item.year)) ?? [];
 
+  useEffect(() => {
+    if (employeeName !== "") {
+      setIsSearching({ state: "loading" });
+
+      searchEmployee();
+    }
+  }, [employeeName]);
+
   return (
     <div className="App">
-      <div>
-        <input
-          type="text"
-          value={employeeName}
-          onChange={(event) => {
-            setEmployeeName(event.target.value);
-          }}
-        />
-        <button onClick={() => searchEmployee()}>Search</button>
-      </div>
+      <div style={{ width: "80%", margin: "0 auto", paddingTop: "35px" }}>
+        <SearchEmployee setEmployeeName={setEmployeeName} />
 
-      <div style={{ width: "80%", margin: "0 auto" }}>
-        <h1>JAY SHARPING Salary</h1>
-      </div>
-
-      <div>
-        <PayrollChart nums={payrolls} labels={years} />
-        <div></div>
+        <div>
+          {isSearching?.state === "success" ? (
+            <PayrollChart nums={payrolls} labels={years} name={employeeName} />
+          ) : isSearching?.state === "loading" ? (
+            <MyLoadingScreen />
+          ) : (
+            <EmptyPage />
+          )}
+        </div>
       </div>
     </div>
   );
