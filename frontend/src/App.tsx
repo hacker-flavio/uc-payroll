@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PayrollChart from "./components/PayrollChart";
 import SearchEmployee from "./components/SearchEmployee";
 import MyLoadingScreen from "./components/MyLoadingScreen";
@@ -20,20 +20,22 @@ function App() {
     null
   );
 
-  const searchEmployee = () => {
-    console.log("Searching for " + employeeName);
+  const searchEmployee = (name: string) => {
+    console.log("Searching for " + name);
+    setIsSearching({ state: "loading" });
 
     axios
       .get("http://localhost:4050/indexEmployeeMongo", {
         params: {
           schoolName: "Merced",
-          employeeName: employeeName,
+          employeeName: name,
         },
       })
       .then((response: ResponseData) => {
         console.log(JSON.stringify(response.data));
         setData(response.data); // Assuming the response is an array
         // setIsSearching(false);
+        setEmployeeName(name);
         setIsSearching({ state: "success" }); // [2
       })
       .catch((error: any) => {
@@ -50,18 +52,10 @@ function App() {
 
   const years = data?.map((item) => parseInt(item.year)) ?? [];
 
-  useEffect(() => {
-    if (employeeName !== "") {
-      setIsSearching({ state: "loading" });
-
-      searchEmployee();
-    }
-  }, [employeeName]);
-
   return (
     <div className="App">
       <div style={{ width: "80%", margin: "0 auto", paddingTop: "35px" }}>
-        <SearchEmployee setEmployeeName={setEmployeeName} />
+        <SearchEmployee searchEmployee={searchEmployee} />
 
         <div>
           {isSearching?.state === "success" ? (

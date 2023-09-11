@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
 
 interface SearchEmployeeProps {
-  setEmployeeName: (name: string) => void;
+  searchEmployee: (name: string) => void;
 }
 
-function SearchEmployee({ setEmployeeName }: SearchEmployeeProps) {
+function SearchEmployee({ searchEmployee }: SearchEmployeeProps) {
   const employeeNameRef = useRef<HTMLInputElement | null>(null);
   const [tempEmployeeName, setTempEmployeeName] = useState("");
 
@@ -21,7 +21,7 @@ function SearchEmployee({ setEmployeeName }: SearchEmployeeProps) {
           }}
         />
         <button
-          onClick={() => setEmployeeName(employeeNameRef.current?.value || "")}
+          onClick={() => searchEmployee(employeeNameRef.current?.value ?? "")}
         >
           Search
         </button>
