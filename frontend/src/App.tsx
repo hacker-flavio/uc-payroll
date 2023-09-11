@@ -25,7 +25,7 @@ function App() {
     setIsSearching({ state: "loading" });
 
     axios
-      .get("http://localhost:4050/indexEmployeeMongo", {
+      .get("https://www.ucpayrolls.com/indexEmployeeMongo", {
         params: {
           schoolName: "Merced",
           employeeName: name,
