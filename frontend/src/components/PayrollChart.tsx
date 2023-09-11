@@ -44,7 +44,7 @@ const LineChart: React.FC<LineChartProps> = ({ nums, labels, name }) => {
         scales: {},
       },
     });
-  }, [nums, labels]);
+  }, [nums, labels, name]);
 
   return <canvas id="line-chart" className="payroll-chart" />;
 };

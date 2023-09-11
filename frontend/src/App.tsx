@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PayrollChart from "./components/PayrollChart";
 import SearchEmployee from "./components/SearchEmployee";
 import MyLoadingScreen from "./components/MyLoadingScreen";
+import Error from "./components/Error";
 import EmptyPage from "./components/EmptyPage";
+
 import axios from "axios";
 interface ResponseData {
   data: {
@@ -36,6 +38,7 @@ function App() {
       })
       .catch((error: any) => {
         console.log(error);
+        setIsSearching({ state: "error" });
       });
   };
 
@@ -65,6 +68,8 @@ function App() {
             <PayrollChart nums={payrolls} labels={years} name={employeeName} />
           ) : isSearching?.state === "loading" ? (
             <MyLoadingScreen />
+          ) : isSearching?.state === "error" ? (
+            <Error />
           ) : (
             <EmptyPage />
           )}
