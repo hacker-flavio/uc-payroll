@@ -4,11 +4,10 @@ import "../styles/PayrollChart.css";
 
 interface LineChartProps {
   nums: { x: number; y: number }[]; // Update the type for nums and nums2
-  nums2: { x: number; y: number }[]; // Update the type for nums and nums2
   labels: number[];
 }
 
-const LineChart: React.FC<LineChartProps> = ({ nums, nums2, labels }) => {
+const LineChart: React.FC<LineChartProps> = ({ nums, labels }) => {
   const chartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
@@ -30,16 +29,9 @@ const LineChart: React.FC<LineChartProps> = ({ nums, nums2, labels }) => {
         labels: labels,
         datasets: [
           {
-            label: "JORGE HERRERA GOMEZ",
+            label: "JAY SHARPING",
             data: nums.map((value) => ({ x: value.x, y: value.y })),
             borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 2,
-            fill: false,
-          },
-          {
-            label: "ROGELIO CHAVEZ",
-            data: nums2.map((value) => ({ x: value.x, y: value.y })),
-            borderColor: "rgba(192, 75, 75, 1)",
             borderWidth: 2,
             fill: false,
           },
@@ -51,7 +43,7 @@ const LineChart: React.FC<LineChartProps> = ({ nums, nums2, labels }) => {
         scales: {},
       },
     });
-  }, [nums, nums2, labels]);
+  }, [nums, labels]);
 
   return (
     <div style={{ width: "80%", margin: "0 auto" }}>
