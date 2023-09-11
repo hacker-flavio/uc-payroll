@@ -48,17 +48,7 @@ const LineChart: React.FC<LineChartProps> = ({ nums, nums2, labels }) => {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          x: {
-            type: "linear", // This ensures that the x-axis treats the labels as numbers
-            ticks: {
-              callback: function (value) {
-                // Custom callback to format x-axis tick labels as strings
-                return value.toString();
-              },
-            },
-          },
-        },
+        scales: {},
       },
     });
   }, [nums, nums2, labels]);
