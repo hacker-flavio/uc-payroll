@@ -82,7 +82,7 @@ function SearchEmployee({ searchEmployee }: SearchEmployeeProps) {
   };
 
   useEffect(() => {
-    const filteredEmployees = filterEmployees(tempEmployeeName);
+    const filteredEmployees = filterEmployees(tempEmployeeName ?? "");
     setFilteredEmployees(filteredEmployees);
     setSelectedIndex(0); // Reset selected index when the input changes
   }, [tempEmployeeName]);
@@ -111,11 +111,19 @@ function SearchEmployee({ searchEmployee }: SearchEmployeeProps) {
         console.log("ArrowUp");
       } else if (e.key === "Enter" && selectedIndex !== null) {
         // ...
-        setTempEmployeeName(filteredEmployees[selectedIndex]);
-        setSelectedIndex(null);
+        e.preventDefault();
+        if (filteredEmployees.length > 0) {
+          setTempEmployeeName(filteredEmployees[selectedIndex]);
+          setSelectedIndex(null);
+        }
+
+        // setTempEmployeeName(filteredEmployees[selectedIndex]);
+        // setSelectedIndex(null);
         setIsHidden(true);
-        if (isHidden) {
+        if (isHidden && filteredEmployees.length > 0) {
           searchEmployee(employeeNameRef.current?.value ?? "");
+        } else if (isHidden && filteredEmployees.length === 0) {
+          alert("No employee found");
         }
         console.log("Enter");
       } else {
@@ -157,22 +165,24 @@ function SearchEmployee({ searchEmployee }: SearchEmployeeProps) {
           Search
         </button>
       </div>
-      {tempEmployeeName.length > 0 && !isHidden && (
-        <div className="searchBox">
-          {filteredEmployees.map((name, index) => (
-            <div
-              key={name}
-              className={index === selectedIndex ? "selected" : ""}
-              onClick={() => {
-                setTempEmployeeName(name);
-                setSelectedIndex(null);
-              }}
-            >
-              {name}
-            </div>
-          ))}
-        </div>
-      )}
+      {tempEmployeeName?.length > 0 &&
+        !isHidden &&
+        filteredEmployees.length > 0 && (
+          <div className="searchBox">
+            {filteredEmployees.map((name, index) => (
+              <div
+                key={name}
+                className={index === selectedIndex ? "selected" : ""}
+                onClick={() => {
+                  setTempEmployeeName(name);
+                  setSelectedIndex(null);
+                }}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+        )}
 
       <h2>{tempEmployeeName} Salary</h2>
     </div>
