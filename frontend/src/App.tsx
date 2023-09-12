@@ -16,10 +16,13 @@ interface ResponseData {
 function App() {
   //check for url
   var currentUrl = window.location.href;
-  var partStr = currentUrl.slice(0, 5);
+  var partStr = currentUrl.slice(0, 11);
+  console.log(partStr);
   var uri = "";
-  if (partStr === "https") {
+  if (partStr === "https://www") {
     uri = "https://www.ucpayrolls.com";
+  } else if (partStr === "https://ucp") {
+    uri = "https://ucpayrolls.com";
   } else {
     uri = "http://localhost:4050";
   }
