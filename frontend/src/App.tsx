@@ -14,6 +14,16 @@ interface ResponseData {
 }
 
 function App() {
+  //check for url
+  var currentUrl = window.location.href;
+  var partStr = currentUrl.slice(0, 5);
+  var uri = "";
+  if (partStr === "https") {
+    uri = "https://www.ucpayrolls.com";
+  } else {
+    uri = "http://localhost:4050";
+  }
+  console.log(uri);
   const [employeeName, setEmployeeName] = useState("");
   const [isSearching, setIsSearching] = useState({ state: "null" }); // [1
   const [data, setData] = useState<{ year: string; salary: string }[] | null>(
@@ -25,7 +35,7 @@ function App() {
     setIsSearching({ state: "loading" });
 
     axios
-      .get("https://www.ucpayrolls.com/indexEmployeeMongo", {
+      .get(`${uri}/indexEmployeeMongo`, {
         params: {
           schoolName: "Merced",
           employeeName: name,
