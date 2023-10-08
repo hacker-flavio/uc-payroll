@@ -1,0 +1,13 @@
+.searchBox {
+  max-height: 400px;
+  overflow-y: scroll;
+  position: absolute;
+  background-color: white;
+  border: solid 4px;
+  margin: 20px;
+  min-height: 50px;
+  width: 300px;
+}
+.selected {
+  background-color: red;
+}

@@ -2,6 +2,26 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const app = express();
+const cors = require("cors");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const dburl = process.env.DBURL;
+
+app.use(
+  cors({
+    origin: ["*"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+mongoose.connect(dburl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const mdb = mongoose.connection;
+mdb.on("error", (error) => console.error(error));
+mdb.once("open", () => console.log("Connected to Mongoose"));
 
 const port = process.env.PORT || 4050;
 app.use(express.json());
@@ -17,38 +37,51 @@ app.use(express.static(path.resolve(__dirname, "./frontend/build")));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./frontend/build", "index.html"));
 });
-app.get("/payrolls", (req, res) => {
-  let data = new FormData();
-  data.append("_search", "false");
-  data.append("nd", "1693609828178");
-  data.append("rows", "20");
-  data.append("page", "1");
-  data.append("sidx", "EAW_GRS_EARN_AMT");
-  data.append("sord", "desc");
-  data.append("year", "2022");
-  data.append("location", "Merced");
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://ucannualwage.ucop.edu/wage/search.action",
-    headers: {
-      Cookie: "JSESSIONID=0000H5l-s83LwUsRWFvQTLAqqMj:168lpmkau",
-      ...data.getHeaders(),
-    },
-    data: data,
-  };
+app.get("/indexEmployeeMongo", async (req, res) => {
+  const { schoolName, employeeName } = req.query;
+  // const schoolNameToFind = "Merced";
+  // const employeeNameToFind = "ROGELIO CHAVEZ";
+  const schoolNameToFind = schoolName;
+  const employeeNameToFind = employeeName.toUpperCase();
 
-  axios
-    .request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      res.send(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.send({ message: "error" });
-    });
+  try {
+    const collection = mongoose.connection.db.collection("dataFile"); // Replace with your collection name
+
+    const school = await collection.findOne({ name: schoolNameToFind });
+
+    if (school) {
+      const employee = school.employees.find(
+        (employee) => employee.name === employeeNameToFind
+      );
+
+      if (employee) {
+        const payrolls = employee.payrolls;
+        console.log(
+          "Payrolls for",
+          employeeNameToFind,
+          "at",
+          schoolNameToFind,
+          ":",
+          payrolls
+        );
+        res.send(payrolls);
+      } else {
+        console.log("Employee not found in", schoolNameToFind);
+        res.status(404).send("Employee not found");
+      }
+    } else {
+      console.log("School not found:", schoolNameToFind);
+      res.status(404).send("School not found");
+    }
+  } catch (error) {
+    console.error("Error retrieving data from MongoDB:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/testing", async (req, res) => {
+  res.send("Hello World!");
 });
 
 const server = http.createServer(app);

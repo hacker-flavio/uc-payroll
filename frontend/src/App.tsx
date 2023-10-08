@@ -1,90 +1,85 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PayrollChart from "./components/PayrollChart";
+import SearchEmployee from "./components/SearchEmployee";
+import MyLoadingScreen from "./components/MyLoadingScreen";
+import Error from "./components/Error";
+import EmptyPage from "./components/EmptyPage";
+
 import axios from "axios";
+interface ResponseData {
+  data: {
+    year: string;
+    salary: string;
+  }[];
+}
 
 function App() {
-  const [data, setData] = useState<{ rows: { cell: string[]; id: string }[] }>({
-    rows: [],
-  });
-  // Use useState to manage nums and labels arrays
-  const [nums, setNums] = useState<number[]>([]);
-  const [labels, setLabels] = useState<string[]>([]);
-  const [showTable, setShowTable] = useState<boolean>(false);
+  //check for url
+  var currentUrl = window.location.href;
+  var partStr = currentUrl.slice(0, 11);
+  console.log(partStr);
+  var uri = "";
+  if (partStr === "https://www") {
+    uri = "https://www.ucpayrolls.com";
+  } else if (partStr === "https://ucp") {
+    uri = "https://ucpayrolls.com";
+  } else {
+    uri = "http://localhost:4050";
+  }
+  console.log(uri);
+  const [employeeName, setEmployeeName] = useState("");
+  const [isSearching, setIsSearching] = useState({ state: "null" }); // [1
+  const [data, setData] = useState<{ year: string; salary: string }[] | null>(
+    null
+  );
 
-  useEffect(() => {
-    axios.get("/payrolls").then((res) => {
-      // Replace single quotes with double quotes in the response text
-      const responseText = res.data.replace(/'/g, '"');
-      // Parse the JSON string to a JavaScript object
-      const parsedData = JSON.parse(responseText);
-      setData(parsedData);
-    });
-  }, []);
+  const searchEmployee = (name: string) => {
+    console.log("Searching for " + name);
+    setIsSearching({ state: "loading" });
 
-  useEffect(() => {
-    if (data.rows.length > 0) {
-      // Use functional updates to avoid directly mutating the state arrays
-      setNums((prevNums) => {
-        const newNums = data.rows.map((row) => parseInt(row.cell[6], 10)); // Parse to number
-        return [...prevNums, ...newNums];
+    axios
+      .get(`${uri}/indexEmployeeMongo`, {
+        params: {
+          schoolName: "Merced",
+          employeeName: name,
+        },
+      })
+      .then((response: ResponseData) => {
+        console.log(JSON.stringify(response.data));
+        setData(response.data); // Assuming the response is an array
+        // setIsSearching(false);
+        setEmployeeName(name);
+        setIsSearching({ state: "success" }); // [2
+      })
+      .catch((error: any) => {
+        console.log(error);
+        setIsSearching({ state: "error" });
       });
+  };
 
-      setLabels((prevLabels) => {
-        const newLabels = data.rows.map((row) => row.cell[4]);
-        return [...prevLabels, ...newLabels];
-      });
-    }
-  }, [data]);
+  const payrolls =
+    data?.map((object) => ({
+      x: parseInt(object.year),
+      y: parseFloat(object.salary),
+    })) ?? [];
+
+  const years = data?.map((item) => parseInt(item.year)) ?? [];
 
   return (
     <div className="App">
-      <div style={{ width: "80%", margin: "0 auto" }}>
-        <h1>React App</h1>
-      </div>
+      <div style={{ width: "80%", margin: "0 auto", paddingTop: "35px" }}>
+        <SearchEmployee searchEmployee={searchEmployee} />
 
-      <div>
-        <PayrollChart nums={nums} labels={labels} />
-      </div>
-
-      <div style={{ width: "80%", margin: "0 auto" }}>
         <div>
-          <button onClick={() => setShowTable(!showTable)}>Show Table</button>
-        </div>
-        <div>
-          {data && showTable ? (
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Year</th>
-                  <th>Campus</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Title</th>
-                  <th>Salary</th>
-                  <th>Total Pay</th>
-                  <th>Other Pay</th>
-                  <th>Benefits</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.rows.map((row) => (
-                  <tr key={row.id}>
-                    <td>{row.cell[0]}</td>
-                    <td>{row.cell[1]}</td>
-                    <td>{row.cell[2]}</td>
-                    <td>{row.cell[3]}</td>
-                    <td>{row.cell[4]}</td>
-                    <td>{row.cell[5]}</td>
-                    <td>{row.cell[6]}</td>
-                    <td>{row.cell[7]}</td>
-                    <td>{row.cell[8]}</td>
-                    <td>{row.cell[9]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : null}
+          {isSearching?.state === "success" ? (
+            <PayrollChart nums={payrolls} labels={years} name={employeeName} />
+          ) : isSearching?.state === "loading" ? (
+            <MyLoadingScreen />
+          ) : isSearching?.state === "error" ? (
+            <Error />
+          ) : (
+            <EmptyPage />
+          )}
         </div>
       </div>
     </div>
