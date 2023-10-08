@@ -9,6 +9,7 @@ app.use(express.json());
 const axios = require("axios");
 const FormData = require("form-data");
 
+//added comment
 // Serve static files from the "build" directory
 app.use(express.static(path.resolve(__dirname, "./frontend/build")));
 
